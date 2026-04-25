@@ -1,0 +1,10 @@
+.morphe.cli.meta
+.morphe.patches.meta
+apks-keystore/
+apks-patched/
+apks/
+morphe-cli.jar
+patches.mpp
+public*
+downloaded.list
+.morphe.version

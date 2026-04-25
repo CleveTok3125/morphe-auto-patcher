@@ -1,0 +1,3 @@
+[submodule "apkmirror-downloader"]
+	path = apkmirror-downloader
+	url = https://github.com/tanishqmanuja/apkmirror-downloader
