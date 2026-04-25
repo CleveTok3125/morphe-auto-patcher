@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+IMAGE_NAME="morphe-auto-patcher-public"
+CONTAINER_NAME="morphe-auto-patcher-public"
+
+docker build -t "${IMAGE_NAME}" .
+docker rm -f "${CONTAINER_NAME}" >/dev/null 2>&1 || true
+
+docker run \
+    -d \
+    --name "${CONTAINER_NAME}" \
+    --restart unless-stopped \
+    -p 10003:10003 \
+    -v "$(pwd)/public:/app/public:ro" \
+    "${IMAGE_NAME}"

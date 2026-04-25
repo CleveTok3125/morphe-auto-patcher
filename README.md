@@ -52,6 +52,30 @@ Check update status only:
 bash ./check-morphe-update.sh
 ```
 
+## Docker
+
+The repository includes a Docker-based static host for the published files in `public/`.
+
+Build and run the container:
+
+```bash
+./docker.run
+```
+
+This does the following:
+
+- builds the image from `Dockerfile`
+- replaces the existing container if one is already running
+- starts the container with `--restart unless-stopped`
+- mounts `$(pwd)/public` into the container as read-only
+- serves files on port `10003`
+
+Published files are available under the `bW9ycGhl` path:
+
+- `http://<host>:10003/bW9ycGhl/`
+- `http://<host>:10003/bW9ycGhl/<timestamp>/`
+- `http://<host>:10003/bW9ycGhl/latest/`
+
 ## Output
 
 - Downloaded APKs: `apks/`
