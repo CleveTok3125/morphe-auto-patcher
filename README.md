@@ -76,6 +76,8 @@ Published files are available under the `bW9ycGhl` path:
 - `http://<host>:10003/bW9ycGhl/<timestamp>/`
 - `http://<host>:10003/bW9ycGhl/latest/`
 
+`public/latest` is updated by `main.sh` after each successful publish.
+
 ## Output
 
 - Downloaded APKs: `apks/`

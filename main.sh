@@ -34,6 +34,7 @@ ts=$(date +%Y%m%d_%H%M%S)
 release="$PUBLIC/$ts"
 
 mv "$STAGING" "$release"
+ln -sfn "$ts" "$PUBLIC/latest"
 
 cd "$PUBLIC"
 ls -1dt */ | tail -n +4 | xargs -r rm -rf
