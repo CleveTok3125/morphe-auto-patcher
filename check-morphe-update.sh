@@ -3,6 +3,7 @@
 REPO="MorpheApp/morphe-patches"
 API_URL="https://api.github.com/repos/$REPO/releases/latest"
 CACHE_FILE=".morphe.version"
+PENDING_FILE=".morphe.version.next"
 
 response=$(curl -s --fail "$API_URL")
 curl_exit=$?
@@ -27,8 +28,9 @@ fi
 
 if [ "$local_version" != "$latest_version" ]; then
     echo "UPDATE: $local_version -> $latest_version"
-    echo "$latest_version" >"$CACHE_FILE"
+    echo "$latest_version" >"$PENDING_FILE"
     exit 2
 fi
 
+rm -f "$PENDING_FILE"
 exit 0

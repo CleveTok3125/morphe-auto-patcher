@@ -17,7 +17,7 @@ map_pkg() {
 BLACKLIST="com.reddit.frontpage"
 touch downloaded.list
 
-java -jar morphe-cli.jar list-versions patches.mpp |
+java -jar morphe-cli.jar list-versions --patches=patches.mpp |
     awk -v bl="$BLACKLIST" '
 BEGIN {
   split(bl, b, " ")
