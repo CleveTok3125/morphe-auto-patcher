@@ -45,6 +45,8 @@ STAMP_FILE=".patch-state"
 
                 if java -jar ../morphe-cli.jar patch "$apk" \
                     --patches="$PATCHES" \
+                    --out="$patched" \
+                    --keystore="${patched%.apk}.keystore" \
                     --purge \
                     --continue-on-error; then
                     echo "OK: $base"
