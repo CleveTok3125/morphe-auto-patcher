@@ -27,11 +27,15 @@ STAMP_FILE=".patch-state"
                 rm -f ./*-patched.apk
             fi
 
-            for apk in "$APKS_DIR"/*.apk; do
+            rm -rf "$APKS_DIR"/tmp_*
+            rm -rf ../morphe-data/tmp
+
+            for apk in "$APKS_DIR"/*.apk "$APKS_DIR"/*.apkm; do
                 [ -e "$apk" ] || continue
 
                 base=$(basename "$apk")
-                patched="${base%.apk}-patched.apk"
+                base_noext="${base%.*}"
+                patched="${base_noext}-patched.apk"
 
                 echo ""
                 echo "Checking: $base"

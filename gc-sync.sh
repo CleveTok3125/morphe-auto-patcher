@@ -18,7 +18,7 @@ while read -r pkg ver status; do
         continue
     fi
 
-    apk_file=$(find "$APK_DIR" -type f -name "${pkg}_${ver}*.apk" 2>/dev/null | head -n 1)
+    apk_file=$(find "$APK_DIR" -type f -name "${pkg}_${ver}*.apk" -o -name "${pkg}_${ver}*.apkm" 2>/dev/null | head -n 1)
 
     if [ -f "$apk_file" ]; then
         echo "$pkg $ver done" >>"$tmp"

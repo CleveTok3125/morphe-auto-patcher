@@ -3,10 +3,13 @@
 map_pkg() {
     case "$1" in
     com.google.android.youtube)
-        echo "google-inc youtube"
+        echo "google-inc youtube bundle arm64-v8a"
         ;;
     com.google.android.apps.youtube.music)
-        echo "google-inc youtube-music"
+        echo "google-inc youtube-music bundle arm64-v8a"
+        ;;
+    com.reddit.frontpage)
+        echo "redditinc reddit bundle"
         ;;
     *)
         return 1
@@ -14,21 +17,16 @@ map_pkg() {
     esac
 }
 
-BLACKLIST="com.reddit.frontpage"
 touch downloaded.list
 
 java -jar morphe-cli.jar list-versions --patches=patches.mpp |
-    awk -v bl="$BLACKLIST" '
-BEGIN {
-  split(bl, b, " ")
-  for (i in b) blacklist[b[i]] = 1
-}
+    awk '
 /Package name:/ {
   pkg=$NF
   next
 }
 /^[[:space:]]+[0-9]/ {
-  if (!(pkg in blacklist) && !seen[pkg]++) {
+  if (!seen[pkg]++) {
     print pkg, $1
   }
 }
@@ -37,7 +35,9 @@ BEGIN {
     while read pkg ver; do
         echo ""
         mapped=$(map_pkg "$pkg") || continue
-        read org repo <<<"$mapped"
+        read org repo dltype dlarch <<<"$mapped"
+        dltype="${dltype:-apk}"
+        dlarch="${dlarch:-*}"
 
         if grep -q "^$pkg $ver done$" downloaded.list 2>/dev/null; then
             echo "Skip: $pkg $ver"
@@ -49,12 +49,16 @@ BEGIN {
         (
             cd apks || exit 1
 
+            DL_ARCH="$dlarch"
+            DL_DPI="nodpi"
+            [ "$dltype" = "bundle" ] && DL_DPI="*"
+
             FILE_NAME=$(bun ../apkmirror-downloader/src/cli.ts download "$org" "$repo" \
                 --version "$ver" \
-                --arch arm64-v8a \
+                --arch "$DL_ARCH" \
                 --fallbackarch armeabi-v7a \
-                --dpi nodpi \
-                --type apk |
+                --dpi "$DL_DPI" \
+                --type "$dltype" |
                 grep -oE "Downloaded to .*" |
                 sed 's/Downloaded to //')
 

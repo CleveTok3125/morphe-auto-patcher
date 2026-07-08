@@ -29,6 +29,7 @@ if [ "$code" -eq 2 ]; then
 fi
 
 cp -r apks-patched/. "$STAGING"
+rm -f "$STAGING/.patch-state"
 
 ts=$(date +%Y%m%d_%H%M%S)
 release="$PUBLIC/$ts"
