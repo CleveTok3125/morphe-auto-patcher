@@ -51,7 +51,6 @@ STAMP_FILE=".patch-state"
                     --patches="$PATCHES" \
                     --out="$patched" \
                     --keystore="${patched%.apk}.keystore" \
-                    --purge \
                     --continue-on-error; then
                     echo "OK: $base"
                     HAS_CHANGE=1
