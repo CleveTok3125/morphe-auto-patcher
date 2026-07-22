@@ -45,9 +45,9 @@ fetch_latest() {
     echo ""
 }
 
-# morphe-cli
+# morphe-cli (renamed to morphe-desktop)
 fetch_latest \
-    "MorpheApp/morphe-cli" \
+    "MorpheApp/morphe-desktop" \
     "\.jar$" \
     "morphe-cli.jar" \
     ".morphe.cli.meta"
