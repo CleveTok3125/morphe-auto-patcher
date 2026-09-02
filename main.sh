@@ -34,6 +34,13 @@ rm -f "$STAGING/.patch-state"
 ts=$(date +%Y%m%d_%H%M%S)
 release="$PUBLIC/$ts"
 
+for apk in "$STAGING"/*.apk; do
+    [ -e "$apk" ] || continue
+    base="${apk%.apk}"
+    case "$base" in *-"$ts") continue;; esac
+    mv "$apk" "${base}-${ts}.apk"
+done
+
 mv "$STAGING" "$release"
 ln -sfn "$ts" "$PUBLIC/latest"
 
