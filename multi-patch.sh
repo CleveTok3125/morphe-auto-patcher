@@ -64,6 +64,16 @@ validate_result() {
             rm -rf ../morphe-data/tmp
             mkdir -p ../apks-keystore
 
+            for p in ./*-patched.apk; do
+                [ -e "$p" ] || continue
+                stem="${p#./}"
+                stem="${stem%-patched.apk}"
+                if [ ! -e "$APKS_DIR/${stem}.apk" ] && [ ! -e "$APKS_DIR/${stem}.apkm" ]; then
+                    echo "Remove orphan patched: $p"
+                    rm -f "$p"
+                fi
+            done
+
             WORK_DIR="$(mktemp -d)"
             trap 'rm -rf "$WORK_DIR"' EXIT
             RESULT_FILE="$WORK_DIR/result.json"
