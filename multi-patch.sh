@@ -29,6 +29,7 @@ STAMP_FILE=".patch-state"
 
             rm -rf "$APKS_DIR"/tmp_*
             rm -rf ../morphe-data/tmp
+            mkdir -p ../apks-keystore
 
             for apk in "$APKS_DIR"/*.apk "$APKS_DIR"/*.apkm; do
                 [ -e "$apk" ] || continue
@@ -47,10 +48,12 @@ STAMP_FILE=".patch-state"
 
                 echo "Patching: $base"
 
+                keystore="../apks-keystore/${patched%.apk}.keystore"
                 if java -jar ../morphe-cli.jar patch "$apk" \
                     --patches="$PATCHES" \
                     --out="$patched" \
-                    --keystore="${patched%.apk}.keystore" \
+                    --keystore="$keystore" \
+                    -e "GmsCore support" \
                     --continue-on-error; then
                     echo "OK: $base"
                     HAS_CHANGE=1
