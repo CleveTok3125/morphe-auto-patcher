@@ -22,19 +22,15 @@ validate_result() {
     [ -f "$result_file" ] || return 1
     command -v jq >/dev/null 2>&1 || return 1
 
-    jq -e '
-        ((.patchingSteps // []) | map(select(.success == false)) | length) == 0
-        and ((.failedPatches // []) | length) == 0
-        and ((.appliedPatches // []) | length) > 0
-    ' "$result_file" >/dev/null 2>&1 || return 1
+    jq -e --arg required "$required_patch" '
+        def steps: (.stepResults // .patchingSteps // []);
+        def names: map(if type == "string" then . else .name end);
 
-    if [ -n "$required_patch" ]; then
-        jq -e --arg n "$required_patch" \
-            '(.appliedPatches // []) | any(.name == $n)' \
-            "$result_file" >/dev/null 2>&1 || return 1
-    fi
-
-    return 0
+        (steps | map(select(.success == false)) | length) == 0
+        and ((.failedPatches // []) | names | length) == 0
+        and ((.appliedPatches // []) | names | length) > 0
+        and ($required == "" or ((.appliedPatches // []) | names | any(. == $required)))
+    ' "$result_file" >/dev/null 2>&1
 }
 
 (
@@ -62,7 +58,6 @@ validate_result() {
 
             rm -rf "$APKS_DIR"/tmp_*
             rm -rf ../morphe-data/tmp
-            mkdir -p ../apks-keystore
 
             for p in ./*-patched.apk; do
                 [ -e "$p" ] || continue
@@ -98,12 +93,10 @@ validate_result() {
                 echo "Patching: $base"
 
                 rm -f "$RESULT_FILE" "$LOG_FILE"
-                keystore="../apks-keystore/${patched%.apk}.keystore"
                 ok=0
                 if java -jar ../morphe-cli.jar patch "$apk" \
                     --patches="$PATCHES" \
                     --out="$patched" \
-                    --keystore="$keystore" \
                     -e "GmsCore support" \
                     -r "$RESULT_FILE" \
                     --continue-on-error >"$LOG_FILE" 2>&1; then
@@ -130,8 +123,6 @@ validate_result() {
                     rm -f "$patched"
                 fi
             done
-
-            mv -f *.keystore ../apks-keystore/ 2>/dev/null || true
 
             if [ "$HAS_CHANGE" -eq 1 ]; then
                 printf '%s\n' "$CURRENT_STAMP" >"$STAMP_FILE"
