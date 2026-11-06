@@ -36,9 +36,9 @@ validate_result() {
 (
     cd apks-patched &&
         (
-            APKS_DIR="../apks"
-            PATCHES="../patches.mpp"
-            CLI_JAR="../morphe-cli.jar"
+            APKS_DIR="$(cd ../apks && pwd)"
+            PATCHES="$(cd .. && pwd)/patches.mpp"
+            CLI_JAR="$(cd .. && pwd)/morphe-cli.jar"
             CURRENT_STAMP="$(
                 sha256sum "$CLI_JAR" "$PATCHES" |
                     awk '{print $1}' |
@@ -94,9 +94,9 @@ validate_result() {
 
                 rm -f "$RESULT_FILE" "$LOG_FILE"
                 ok=0
-                if java -jar ../morphe-cli.jar patch "$apk" \
+                if java -jar "$CLI_JAR" patch "$apk" \
                     --patches="$PATCHES" \
-                    --out="$patched" \
+                    --out="$(pwd)/$patched" \
                     -e "GmsCore support" \
                     -r "$RESULT_FILE" \
                     --continue-on-error >"$LOG_FILE" 2>&1; then
