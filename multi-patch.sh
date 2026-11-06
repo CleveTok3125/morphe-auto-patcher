@@ -120,6 +120,21 @@ validate_result() {
                     HAS_CHANGE=1
                 else
                     echo "FAILED: $base (patch did not apply)"
+                    if [ -f "$RESULT_FILE" ] && command -v jq >/dev/null 2>&1; then
+                        echo "  applied=$(jq -r '(.appliedPatches // []) | length' "$RESULT_FILE") failed=$(jq -r '(.failedPatches // []) | length' "$RESULT_FILE")"
+                    fi
+                    if [ -s "$LOG_FILE" ]; then
+                        pattern='ERROR: |Exception in thread|^[A-Za-z_.$]+(Exception|Error)(:|$)'
+                        start=""
+                        if grep -qE "$pattern" "$LOG_FILE"; then
+                            start="$(grep -nE -m1 "$pattern" "$LOG_FILE" | cut -d: -f1)"
+                        fi
+                        if [ -n "$start" ]; then
+                            sed -n "${start},$((start + 12))p" "$LOG_FILE" | sed 's/^/  /'
+                        else
+                            tail -n 3 "$LOG_FILE" | sed 's/^/  /'
+                        fi
+                    fi
                     rm -f "$patched"
                 fi
             done
